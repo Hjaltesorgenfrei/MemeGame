@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-import asyncio
-import websockets
+import asyncio, websockets, os
+
 
 SERVER_ADDRESS = '127.0.0.1'
-HTTP_PORT = 80
+HTTP_PORT = int(os.environ.get("PORT", 80))
 WEBSOCKET_PORT = 5678
 
 
