@@ -4,14 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Memegame</title>
-    
+    <title>Memegame</title>    
 </head>
 
 <body>
     <p>Current Name:<b id="show_username">Not Set</b></p>
     <input id="name_field" type="text" placeholder="Please enter your name" size="50">
     <button onclick="saveNameChange()">Change Name</button> 
+    <br>
+    <input type="file"
+       id="file_picker" name="avatar"
+       accept="image/png, image/jpeg">
+    <button onclick="submitImage('file_picker')">Submit Image</button> 
+
 </body>
 <script src="./script.js"></script>
 </html>

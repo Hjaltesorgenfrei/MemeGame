@@ -24,13 +24,20 @@ def get_json_from_url(url):
 def json_array_from_dict(dic):
     return json.dumps([{'key': k, 'value': dic[k]} for k in dic])
 
+def filter_images(name):
+    if not name:
+        return False 
+    l = name.lower()
+    return l.endswith("png") or l.endswith("jpg") or l.endswith("jpeg")
 
 visuals = {x["id"]: x["filename"]
-           for x in get_json_from_url("https://api.mads.monster/visuals")}
+           for x in get_json_from_url("https://api.mads.monster/visuals") if filter_images(x['filename']) }
 top_texts = {x["id"]: x["memetext"]
              for x in get_json_from_url("https://api.mads.monster/toptexts")}
 bottoms_texts = {x["id"]: x["memetext"]
                  for x in get_json_from_url("https://api.mads.monster/bottomtexts")}
+
+print(visuals)
 
 connections = []
 

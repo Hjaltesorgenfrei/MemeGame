@@ -74,7 +74,7 @@ if (saved_username !== null) {
 }
 
 function saveNameChange() {
-    let input = document.querySelector('input');
+    let input = document.getElementById('name_field');
     username = input.value;
     if (socket.readyState == socket.OPEN) {
         let message = {
@@ -83,5 +83,23 @@ function saveNameChange() {
             user_id: own_user_id
         };
         socket.send(JSON.stringify(message))
+    }
+}
+
+async function getAsByteArray(file) {
+    return new Uint8Array(await readFile(file));
+}
+
+async function submitImage(inputfield) {
+    let file = document.getElementById(inputfield).files[0];
+    if (file) {
+        var reader = new FileReader();
+        reader.readAsText(file, "UTF-8");
+        reader.onload = function (evt) {
+            console.log(evt.target.result);
+        }
+        reader.onerror = function (evt) {
+            console.log(evt);
+        }
     }
 }
