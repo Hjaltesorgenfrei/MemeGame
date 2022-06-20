@@ -10,3 +10,11 @@ with open("IMG.JPG","rb") as file:
     response = s.send(request)
     print(response)
     print(response.content)
+    
+
+"""
+<input type="file"
+    id="file_picker" name="avatar"
+    accept="image/png, image/jpeg">
+<button onclick="submitImage('file_picker')">Submit Image</button> 
+"""

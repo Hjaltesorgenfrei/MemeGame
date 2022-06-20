@@ -1,26 +1,8 @@
+import {setCookie, getCookie, eraseCookie} from "./cookies.js";
 
-function setCookie(name,value,days) {
-    var expires = "";
-    if (days) {
-        var date = new Date();
-        date.setTime(date.getTime() + (days*24*60*60*1000));
-        expires = "; expires=" + date.toUTCString();
-    }
-    document.cookie = name + "=" + (value || "")  + expires + "; SameSite=Strict; path=/";
-}
-function getCookie(name) {
-    var nameEQ = name + "=";
-    var ca = document.cookie.split(';');
-    for(var i=0;i < ca.length;i++) {
-        var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1,c.length);
-        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-    }
-    return null;
-}
-function eraseCookie(name) {   
-    document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-}
+// let socket = new WebSocket("ws://mega-meme-game.herokuapp.com/");
+let socket = new WebSocket("ws://localhost:5678");
+
 function makeid(length) {
     var result           = '';
     var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -38,53 +20,121 @@ function generate_guid() {
     return id;
 }
 
-let own_user_id = getCookie("user_guid") ?? generate_guid();
+function get_user_id() {
+    return getCookie("user_guid") ?? generate_guid();
+}
 
-function username_changed(username, user_id) {
-    if (own_user_id == user_id) {
+function usernameChanged(username, user_id) {
+    if (get_user_id() == user_id) {
         setCookie("username", username, 30);
         show_username.innerHTML = username;
     }
-    console.log(`User(${user_id}) changed name to ${username}`)
+    console.log(`User(${user_id}) changed name to ${username}`);
 }
 
+function join_with_username(username) {
+    let message = {
+        type: 'user_joined',
+        username: username,
+        user_id: get_user_id()
+    };
+    socket.send(JSON.stringify(message));
+}
 
 // Socket Setup
-// let socket = new WebSocket("ws://mega-meme-game.herokuapp.com/");
-let socket = new WebSocket("ws://localhost:5678");
+
 socket.addEventListener('open', function (event) {
-    // socket.send('toptexts');
+    let saved_username = getCookie("username");
+    if (saved_username !== null) {
+        join_with_username(saved_username);
+    }
 });
 socket.addEventListener('message', function (event) {
     let data = JSON.parse(event.data);
     switch(data.type) {
         case 'username_change_approve':
-            username_changed(data.username, data.user_id)
+            usernameChanged(data.username, data.user_id);
+            break;
+        case 'game_started':
+            setCurrentHost(data.host);
+            gameStarted();
+            break;
+        case 'game_in_progress':
+            setCurrentHost(data.host);
+            gameStarted();
+            break;
+        case 'game_ended':
+            setCurrentHost("No Game In Progress");
+            gameEnded();
+            break;
         default: 
             console.log("Unhandled data", data);
     }   
 });
 
-
-
-
-let show_username = document.getElementById('show_username');
-saved_username = getCookie("username");
-if (saved_username !== null) {
-    show_username.innerHTML = saved_username;
-}
-
 function saveNameChange() {
     let input = document.getElementById('name_field');
-    username = input.value;
     if (socket.readyState == socket.OPEN) {
         let message = {
             type: 'username_change_request',
-            username: username,
-            user_id: own_user_id
+            username: input.value,
+            user_id: get_user_id()
         };
-        socket.send(JSON.stringify(message))
+        socket.send(JSON.stringify(message));
     }
+}
+
+function startGame() {
+    if (socket.readyState == socket.OPEN) {
+        let message = {
+            type: 'start_game',
+            user_id: get_user_id()
+        };
+        socket.send(JSON.stringify(message));
+    }
+}
+
+function endGame() {
+    if (socket.readyState == socket.OPEN) {
+        let message = {
+            type: 'end_game',
+            user_id: get_user_id()
+        };
+        socket.send(JSON.stringify(message));
+    }
+}
+
+function setCurrentHost(hostname) {
+    let current_host = document.getElementById('current_host');
+    current_host.innerHTML = hostname;
+}
+
+function joinedGameInProgress() {
+
+}
+
+function gameStarted() {
+    
+}
+
+function gameEnded() {
+}
+
+function onStartUp() {
+    let show_username = document.getElementById('show_username');
+    let saved_username = getCookie("username");
+    if (saved_username !== null) {
+        show_username.innerHTML = saved_username;
+    }
+
+    let save_name_change = document.getElementById('save_name_change');
+    save_name_change.onclick = saveNameChange;
+
+    let start_game = document.getElementById('start_game');
+    start_game.onclick = startGame;
+
+    let end_game = document.getElementById('end_game');
+    end_game.onclick = endGame;
 }
 
 async function getAsByteArray(file) {
@@ -104,3 +154,5 @@ async function submitImage(inputfield) {
         }
     }
 }
+
+onStartUp();
