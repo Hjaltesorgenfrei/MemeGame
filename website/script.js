@@ -29,7 +29,7 @@ function get_user_id() {
 function usernameChanged(username, user_id) {
     if (get_user_id() == user_id) {
         setCookie("username", username, 30);
-        show_username.innerHTML = username;
+        show_username.innerText = username;
     }
     console.log(`User(${user_id}) changed name to ${username}`);
 }
@@ -111,7 +111,7 @@ function endGame() {
 
 function setCurrentHost(hostname) {
     let current_host = document.getElementById('current_host');
-    current_host.innerHTML = hostname;
+    current_host.innerText = hostname;
 }
 
 function createTextCards(top_texts, bottom_texts) {
@@ -156,7 +156,7 @@ function onStartUp() {
     let show_username = document.getElementById('show_username');
     let saved_username = getCookie("username");
     if (saved_username !== null) {
-        show_username.innerHTML = saved_username;
+        show_username.innerText = saved_username;
     }
 
     let save_name_change = document.getElementById('save_name_change');
