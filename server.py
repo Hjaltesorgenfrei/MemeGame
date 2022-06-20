@@ -78,13 +78,13 @@ current_game = None
 connections = []
 
 async def receive_messages(websocket):
-    global current_game
+    global current_game, players
     connections.append(websocket)
     async for message in websocket:
         try:
             data = json.loads(message)
         except:
-            print("Failed on:", message)
+            print("Failed on: ", message)
             continue
         user_id = data["user_id"]
         match (data["type"]):

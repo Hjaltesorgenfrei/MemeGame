@@ -2,8 +2,8 @@ import {setCookie, getCookie, eraseCookie} from "./cookies.js";
 import {Card} from "./Card.js";
 customElements.define('play-card', Card);
 
-// let socket = new WebSocket("ws://mega-meme-game.herokuapp.com/");
-let socket = new WebSocket("ws://localhost:5678");
+let socket = new WebSocket("wss://mega-meme-game.herokuapp.com/");
+// let socket = new WebSocket("ws://localhost:5678");
 
 function makeid(length) {
     var result           = '';
