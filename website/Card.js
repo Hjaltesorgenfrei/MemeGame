@@ -17,45 +17,9 @@ export class Card extends HTMLElement {
         text = text ?? this.getAttribute('data-text');
         info.textContent = text;
 
-        const style = document.createElement('style');
-
-        style.textContent = `
-        /* https://codepen.io/jefflombard/pen/GqBzxe */
-        .card {
-            /* Card Sizing */
-            font-family: Helvetica, sans-serif;
-            font-weight: bolder;
-            font-size: 22px;
-            flex: 1;
-            width: 8em;
-            height: 10em;
-            border-radius: .25in;
-
-            /* Display Properties */
-            margin: 10px;
-        }
-
-        .dark {
-            /* Color information */
-            border: 3px solid black;
-            color: white;
-            background: black;
-        }
-
-        .light {
-            /* Color information */
-            border: 3px solid black;
-            color: black;
-            background: white;
-        }
-
-        .text {
-            /*font information*/
-            padding-left: 7%;
-            padding-right: 7%;
-            word-wrap: break-word;
-        }
-        `;
+        const style = document.createElement('link');
+        style.setAttribute('rel', 'stylesheet');
+        style.setAttribute('href', './style.css');
 
         // Attach the created elements to the shadow dom
         shadow.appendChild(style);
