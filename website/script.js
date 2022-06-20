@@ -1,4 +1,6 @@
 import {setCookie, getCookie, eraseCookie} from "./cookies.js";
+import {Card} from "./Card.js";
+customElements.define('play-card', Card);
 
 // let socket = new WebSocket("ws://mega-meme-game.herokuapp.com/");
 let socket = new WebSocket("ws://localhost:5678");
@@ -67,6 +69,9 @@ socket.addEventListener('message', function (event) {
             setCurrentHost("No Game In Progress");
             gameEnded();
             break;
+        case 'current_cards':
+            createTextCards(data.top_texts, data.bottom_texts);
+            break;
         default: 
             console.log("Unhandled data", data);
     }   
@@ -109,15 +114,42 @@ function setCurrentHost(hostname) {
     current_host.innerHTML = hostname;
 }
 
+function createTextCards(top_texts, bottom_texts) {
+    if (top_texts) {
+        let top_texts_container = document.getElementById('top_texts');
+        top_texts_container.innerHTML = "";
+        top_texts.forEach(element => {
+            let card = new Card(element);
+            top_texts_container.appendChild(card);
+        });
+    }
+    if (bottom_texts) {
+        let bottom_texts_container = document.getElementById('bottom_texts');
+        bottom_texts_container.innerHTML = "";
+        bottom_texts.forEach(element => {
+            let card = new Card(element);
+            bottom_texts_container.appendChild(card);
+        });
+    }
+}
+
 function joinedGameInProgress() {
 
 }
 
 function gameStarted() {
-    
+    let message = {
+        type: 'ask_for_cards',
+        user_id: get_user_id()
+    };
+    socket.send(JSON.stringify(message));
 }
 
 function gameEnded() {
+    let top_texts = document.getElementById('top_texts');
+    top_texts.innerHTML = "";
+    let bottom_texts = document.getElementById('bottom_texts');
+    bottom_texts.innerHTML = "";
 }
 
 function onStartUp() {
