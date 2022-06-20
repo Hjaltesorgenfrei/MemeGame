@@ -89,6 +89,8 @@ async def receive_messages(websocket):
         user_id = data["user_id"]
         match (data["type"]):
             case "username_change_request": 
+                if user_id not in players:
+                    players[user_id] = Player(user_id, data["username"])  
                 response = json.dumps({
                     "type":"username_change_approve",
                     "username": data["username"],
