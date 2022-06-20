@@ -1,4 +1,4 @@
-// let socket = new WebSocket("ws://mega-meme-game.herokuapp.com/");
+
 function setCookie(name,value,days) {
     var expires = "";
     if (days) {
@@ -50,6 +50,7 @@ function username_changed(username, user_id) {
 
 
 // Socket Setup
+// let socket = new WebSocket("ws://mega-meme-game.herokuapp.com/");
 let socket = new WebSocket("ws://localhost:5678");
 socket.addEventListener('open', function (event) {
     // socket.send('toptexts');
