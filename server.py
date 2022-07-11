@@ -28,6 +28,7 @@ class Game():
                         for x in get_json_from_url("https://api.mads.monster/bottomtexts")}
         self.host_id = host_id
         self.current_players = {}
+        self.current_visual = None
         self.num_cards = 7
 
     def __deal_new_cards(self):
@@ -44,6 +45,11 @@ class Game():
         if user_id not in self.current_players:
             self.current_players[user_id] = self.__deal_new_cards()
         return self.current_players[user_id]
+
+    def image_prompt(self):
+        self.visuals, visuals = pop_n_elements_from_dict(self.visuals, 1)
+        self.current_visual = visuals[0]
+        return self.current_visual
 
 
 class Player():
@@ -142,7 +148,15 @@ async def receive_messages(websocket):
                     "top_texts": top_texts, 
                     "bottom_texts": bottom_texts
                 }))
-
+            case "draw_visual_prompt":
+                visual = current_game.image_prompt()
+                response = json.dumps({
+                    "type":"visual_prompt",
+                    "url": visual
+                })
+                print(f"Drew {visual}")
+                websockets.broadcast(connections, response)
+                pass
             case "end_game":
                 current_game = None
                 response = json.dumps({
